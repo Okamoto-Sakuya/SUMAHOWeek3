@@ -1,56 +1,25 @@
 using UnityEngine;
 
-public class EnemySpawner : MonoBehaviour
+public class MeteorSpawner : MonoBehaviour
 {
-    public GameObject enemyPrefab;
-    public RectTransform canvasTransform;
+    public GameObject meteorPrefab;
 
-    [Header("Lane Targets (UI Image)")]
-    public RectTransform leftLane;
-    public RectTransform centerLane;
-    public RectTransform rightLane;
-
-    [Header("Spawn")]
-    public float spawnY = 500f;
     public float spawnInterval = 2f;
 
-    [Header("Enemy Speed")]
-    public float enemySpeed = 200f;
-    public float speedUpRate = 5f;
+    public float spawnX = 500f;
+    public float spawnY = 1000f;
 
-    private float timer;
-
-    void Update()
+    void Start()
     {
-        timer += Time.deltaTime;
-
-        enemySpeed += speedUpRate * Time.deltaTime;
-
-        if (timer >= spawnInterval)
-        {
-            Spawn();
-            timer = 0f;
-        }
+        InvokeRepeating(nameof(SpawnMeteor), 1f, spawnInterval);
     }
 
-    void Spawn()
+    void SpawnMeteor()
     {
-        GameObject enemy = Instantiate(enemyPrefab, canvasTransform);
-        RectTransform rect = enemy.GetComponent<RectTransform>();
+        float randomX = Random.Range(-spawnX, spawnX);
 
-        int lane = Random.Range(0, 3);
+        Vector3 pos = new Vector3(randomX, spawnY, 0);
 
-        RectTransform targetLane = leftLane;
-
-        if (lane == 1) targetLane = centerLane;
-        if (lane == 2) targetLane = rightLane;
-
-        rect.anchoredPosition = new Vector2(
-            targetLane.anchoredPosition.x,
-            spawnY
-        );
-
-        EnemyUI enemyScript = enemy.GetComponent<EnemyUI>();
-        enemyScript.fallSpeed = enemySpeed;
+        Instantiate(meteorPrefab, pos, Quaternion.identity, transform);
     }
 }

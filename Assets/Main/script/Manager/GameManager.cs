@@ -1,24 +1,65 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManager instance;
 
-    public int score = 0;
+    public TMP_Text scoreText;
 
-    private void Awake()
+    public TMP_Text lifeText;
+
+    public GameObject gameOverPanel;
+
+    private int score = 0;
+
+    private int landedCount = 0;
+
+    private int maxLand = 3;
+
+    void Awake()
     {
-        Instance = this;
+        instance = this;
+    }
+
+    void Start()
+    {
+        UpdateUI();
+
+        gameOverPanel.SetActive(false);
     }
 
     public void AddScore(int value)
     {
         score += value;
+
+        UpdateUI();
     }
 
-    public void GameOver()
+    public void MeteorLanded()
     {
-        SceneManager.LoadScene("GameOver");
+        landedCount++;
+
+        UpdateUI();
+
+        if (landedCount >= maxLand)
+        {
+            GameOver();
+        }
+    }
+
+    void UpdateUI()
+    {
+        scoreText.text = "SCORE : " + score;
+
+        lifeText.text =
+            "Žc‚è : " + (maxLand - landedCount);
+    }
+
+    void GameOver()
+    {
+        gameOverPanel.SetActive(true);
+
+        Time.timeScale = 0f;
     }
 }
