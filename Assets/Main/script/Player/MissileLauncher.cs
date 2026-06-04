@@ -6,14 +6,18 @@ public class MissileLauncher : MonoBehaviour
 
     public Transform firePoint;
 
-    public float missilePower = 1200f;
+    [SerializeField] private float missilePower = 10f;
 
-    private Vector2 startTouch;
+    private Vector2 startPos;
 
     private bool canShoot = true;
 
     void Update()
     {
+        //========================
+        // スマホ操作
+        //========================
+
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
@@ -21,20 +25,42 @@ public class MissileLauncher : MonoBehaviour
             // タッチ開始
             if (touch.phase == TouchPhase.Began)
             {
-                startTouch = touch.position;
+                startPos = touch.position;
             }
 
-            // フリック終了
+            // タッチ終了
             if (touch.phase == TouchPhase.Ended)
             {
                 if (!canShoot) return;
 
-                Vector2 endTouch = touch.position;
+                Vector2 endPos = touch.position;
 
-                Vector2 dir = (endTouch - startTouch).normalized;
+                Vector2 dir =
+                    (endPos - startPos).normalized;
 
                 Shoot(dir);
             }
+        }
+
+        //========================
+        // マウス操作（テスト用）
+        //========================
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            startPos = Input.mousePosition;
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (!canShoot) return;
+
+            Vector2 endPos = Input.mousePosition;
+
+            Vector2 dir =
+                (endPos - startPos).normalized;
+
+            Shoot(dir);
         }
     }
 
@@ -43,14 +69,19 @@ public class MissileLauncher : MonoBehaviour
         canShoot = false;
 
         GameObject missile =
-            Instantiate(missilePrefab, firePoint.position, Quaternion.identity);
+            Instantiate(
+                missilePrefab,
+                firePoint.position,
+                Quaternion.identity
+            );
 
-        Rigidbody2D rb = missile.GetComponent<Rigidbody2D>();
+        Rigidbody2D rb =
+            missile.GetComponent<Rigidbody2D>();
 
         rb.linearVelocity = dir * missilePower;
     }
 
-    // ミサイル消えたら再発射可能
+    // リロード
     public void Reload()
     {
         canShoot = true;

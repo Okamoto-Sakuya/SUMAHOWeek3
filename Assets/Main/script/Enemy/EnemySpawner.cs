@@ -6,20 +6,28 @@ public class MeteorSpawner : MonoBehaviour
 
     public float spawnInterval = 2f;
 
-    public float spawnX = 500f;
-    public float spawnY = 1000f;
+    private BoxCollider2D spawnArea;
 
     void Start()
     {
+        spawnArea = GetComponent<BoxCollider2D>();
+
         InvokeRepeating(nameof(SpawnMeteor), 1f, spawnInterval);
     }
 
     void SpawnMeteor()
     {
-        float randomX = Random.Range(-spawnX, spawnX);
+        Bounds bounds = spawnArea.bounds;
 
-        Vector3 pos = new Vector3(randomX, spawnY, 0);
+        float randomX =
+            Random.Range(bounds.min.x, bounds.max.x);
 
-        Instantiate(meteorPrefab, pos, Quaternion.identity, transform);
+        float randomY =
+            Random.Range(bounds.min.y, bounds.max.y);
+
+        Vector3 spawnPos =
+            new Vector3(randomX, randomY, 0f);
+
+        Instantiate(meteorPrefab, spawnPos, Quaternion.identity);
     }
 }

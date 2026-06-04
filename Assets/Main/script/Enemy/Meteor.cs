@@ -2,19 +2,20 @@ using UnityEngine;
 
 public class Meteor : MonoBehaviour
 {
-    public float fallSpeed = 200f;
+    [SerializeField] private float fallSpeed = 5f;
 
-    private RectTransform rectTransform;
+    private Rigidbody2D rb;
 
     void Start()
     {
-        rectTransform = GetComponent<RectTransform>();
+        rb = GetComponent<Rigidbody2D>();
+
+        rb.gravityScale = 0f;
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        rectTransform.anchoredPosition +=
-            Vector2.down * fallSpeed * Time.deltaTime;
+        rb.linearVelocity = Vector2.down * fallSpeed;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
